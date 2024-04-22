@@ -4,6 +4,5 @@ This project involves creating a sample Augmentive and Alternative Communication
 Author: Rommin Adl
 Class: CSC-207 Spring 2024
 Acknowledgements: Original AAC project by Catie Baker, MP 5 documentation, SAMR. https://rebelsky.cs.grinnell.edu/Courses/CSC207/2024Sp/mps/mp05.html
-Change Log
 GitHub Link
 https://github.com/nickabooch/AACNestedHW
