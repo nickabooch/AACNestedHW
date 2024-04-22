@@ -39,7 +39,7 @@ public class AAC implements ActionListener {
 	private static final int NUM_ACROSS = 3;
 	private static final int NUM_DOWN = 3;
 	private String[] images;
-	private AACPage page;
+	private AACMappings aacMappings;
 	private Scanner input;
 
 	/**
@@ -49,9 +49,9 @@ public class AAC implements ActionListener {
 	 *                 will be in the AAC
 	 */
 	public AAC(String filename) {
-		//this.page = new AACCategory("test");
-		this.page = new AACMappings(filename);
-		this.images = this.page.getImageLocs();
+		//this.aacMappings = new AACCategory("test");
+		this.aacMappings = new AACMappings(filename);
+		this.images = this.aacMappings.getImageLocs();
 		this.startIndex = 0;
 		this.endIndex = Math.min(NUM_ACROSS * NUM_DOWN, this.images.length);
 		frame = new JFrame();
@@ -78,9 +78,10 @@ public class AAC implements ActionListener {
 		topPanel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		String category = "Home Page";
-		if (!this.page.getCategory().equals("")) {
-			category = this.page.getCategory();
-		}
+		if (!this.aacMappings.getCurrentCategory().equals("")) {
+			category = this.aacMappings.getCurrentCategory();
+	}
+	
 		c.gridx = 0;
 		c.gridy = 0;
 		JLabel cat = new JLabel(category);
@@ -88,7 +89,7 @@ public class AAC implements ActionListener {
 		topPanel.add(cat, c);
 		JPanel panel1 = new JPanel();
 		panel1.setLayout(new GridLayout(1, 3));
-		if (this.page instanceof AACMappings) {
+		if (this.aacMappings instanceof AACMappings) {
 			JButton home = new JButton(new ImageIcon("img/home.png"));
 			home.setActionCommand("");
 			home.addActionListener(this);
@@ -167,7 +168,7 @@ public class AAC implements ActionListener {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		AAC aac = new AAC("AACMappings.txt");
+    new AAC("AACMappings.txt");
 	}
 
 	/**
@@ -183,9 +184,9 @@ public class AAC implements ActionListener {
 		} else if (actionCommand.equals("next")) {
 			this.startIndex += NUM_ACROSS * NUM_DOWN;
 			this.endIndex = Math.min(endIndex + NUM_ACROSS * NUM_DOWN, this.images.length);
-		} else if (actionCommand.equals("save") && this.page instanceof AACMappings) {
-			((AACMappings) this.page).writeToFile("AACMappingsNew.txt");
-			this.images = this.page.getImageLocs();
+		} else if (actionCommand.equals("save") && this.aacMappings instanceof AACMappings) {
+			((AACMappings) this.aacMappings).writeToFile("AACMappingsNew.txt");
+			this.images = this.aacMappings.getImageLocs();
 			this.startIndex = 0;
 			this.endIndex = Math.min(NUM_ACROSS * NUM_DOWN, this.images.length);
 		} else if (actionCommand.equals("add")) {
@@ -197,26 +198,26 @@ public class AAC implements ActionListener {
 				String result = (String) JOptionPane.showInputDialog(frame, "What is the text?", "AAC Add",
 						JOptionPane.PLAIN_MESSAGE, null, null, "");
 				if (result != null && result.length() > 0) {
-					this.page.addItem(imageLoc, result);
+					this.aacMappings.add(imageLoc, result);
 				}
 			}
-			this.images = this.page.getImageLocs();
+			this.images = this.aacMappings.getImageLocs();
 			this.startIndex = 0;
 			this.endIndex = Math.min(NUM_ACROSS * NUM_DOWN, this.images.length);
-		} else if (actionCommand.equals("") && this.page instanceof AACMappings) {
-			((AACMappings) this.page).reset();
-			this.images = this.page.getImageLocs();
+		} else if (actionCommand.equals("") && this.aacMappings instanceof AACMappings) {
+			((AACMappings) this.aacMappings).reset();
+			this.images = this.aacMappings.getImageLocs();
 			this.startIndex = 0;
 			this.endIndex = Math.min(NUM_ACROSS * NUM_DOWN, this.images.length);
 		} else {
-			if (this.page.getCategory().equals("")) {
-				this.page.select(actionCommand);
-				this.images = this.page.getImageLocs();
+			if (this.aacMappings.getCurrentCategory().equals("")) {
+				this.aacMappings.getText(actionCommand);
+				this.images = this.aacMappings.getImageLocs();
 				this.startIndex = 0;
 				this.endIndex = Math.min(NUM_ACROSS * NUM_DOWN, this.images.length);
 			} else {
 				try {
-					String toSpeak = this.page.select(actionCommand);
+					String toSpeak = this.aacMappings.getText(actionCommand);
 					synthesizer.speakPlainText(toSpeak, null);
 					synthesizer.waitEngineState(Synthesizer.QUEUE_EMPTY);
 				} catch (Exception e1) {
